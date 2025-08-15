@@ -27,12 +27,27 @@ public class Spawner : MonoBehaviour
             defaultCapacity: _poolDefaultSize,
             maxSize: _poolMaxSize
             );
+        Debug.Log("Pool init");
     }
 
-    public void StartCorutine()
+    private void OnValidate()
     {
-        _corutine = SpawnCorutine();
-        StartCoroutine(_corutine);
+        if ( _poolMaxSize < _poolDefaultSize )
+            _poolMaxSize = _poolDefaultSize + 1;
+    }
+
+    public void ChangeCorutineState()
+    {
+        if ( _corutine == null )
+        {
+            _corutine = Corutine();
+            StartCoroutine(_corutine);
+        }
+        else
+        {
+            StopCoroutine(_corutine);
+            _corutine = null;
+        }
     }
 
     private void Spawn()
@@ -67,7 +82,7 @@ public class Spawner : MonoBehaviour
         return new Vector3(positionX, positionY, positionZ);
     }
 
-    private IEnumerator SpawnCorutine()
+    private IEnumerator Corutine()
     {
         var wait = new WaitForSeconds(_spawnDelay);
 
