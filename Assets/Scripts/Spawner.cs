@@ -1,19 +1,18 @@
-using System.Collections;
+using System;
 using UnityEngine;
 using UnityEngine.Pool;
 
 public class Spawner : MonoBehaviour
 {
-    [SerializeField] private BoxCollider _spawnZone;
+    [SerializeField] private Collider _spawnZone;
     [SerializeField] private Cube _prefab;
 
     [SerializeField, Range(0, 20)] private int _poolDefaultSize = 10;
     [SerializeField, Range(0, 200)] private int _poolMaxSize = 20;
 
-    [SerializeField, Range(0, 5)] private float _spawnDelay = 0.1f;
-
     private ObjectPool<Cube> _pool;
-    private IEnumerator _corutine;
+
+    public event Action<Cube> CubeEnabled;
 
     private void Awake()
     {
@@ -27,32 +26,24 @@ public class Spawner : MonoBehaviour
             defaultCapacity: _poolDefaultSize,
             maxSize: _poolMaxSize
             );
-        Debug.Log("Pool init");
     }
 
     private void OnValidate()
     {
-        if ( _poolMaxSize < _poolDefaultSize )
+        if (_poolMaxSize < _poolDefaultSize)
             _poolMaxSize = _poolDefaultSize + 1;
     }
 
-    public void ChangeCorutineState()
+    public void Spawn()
     {
-        if ( _corutine == null )
-        {
-            _corutine = Corutine();
-            StartCoroutine(_corutine);
-        }
-        else
-        {
-            StopCoroutine(_corutine);
-            _corutine = null;
-        }
+        var cube = _pool.Get();
+        cube.PlatformHitted += Release;
     }
 
-    private void Spawn()
+    public void Release(Cube cube)
     {
-        _pool.Get();
+        cube.PlatformHitted -= Release;
+        _pool.Release(cube);
     }
 
     private void OnActionGet(Cube cube)
@@ -76,20 +67,9 @@ public class Spawner : MonoBehaviour
         float maxPositionZ = _spawnZone.bounds.max.z;
 
         float positionY = _spawnZone.transform.position.y;
-        float positionX = Random.Range(minPositionX, maxPositionX);
-        float positionZ = Random.Range(minPositionZ, maxPositionZ);
+        float positionX = UnityEngine.Random.Range(minPositionX, maxPositionX);
+        float positionZ = UnityEngine.Random.Range(minPositionZ, maxPositionZ);
 
         return new Vector3(positionX, positionY, positionZ);
-    }
-
-    private IEnumerator Corutine()
-    {
-        var wait = new WaitForSeconds(_spawnDelay);
-
-        while (enabled)
-        {
-            Spawn();
-            yield return wait;
-        }
     }
 }
