@@ -66,7 +66,6 @@ public class Spawner : MonoBehaviour
         _pool.Release(cube);
         cube.PlatformHitted -= _colorer.SetRandomColor;
         cube.PlatformHitted -= _releaser.StartReleaseCoroutine;
-        Debug.Log("Release");
     }
 
     private Vector3 GetRandomPosition()
