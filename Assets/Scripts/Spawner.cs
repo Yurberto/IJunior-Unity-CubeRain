@@ -1,11 +1,14 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Pool;
 
 public class Spawner : MonoBehaviour
 {
     [SerializeField] private Cube _prefab;
+    [SerializeField] private Color _prefabColor;
     [SerializeField] private Collider _spawnZone;
     [SerializeField] private Colorer _colorer;
+    [SerializeField] private Releaser _releaser;
 
     [SerializeField, Range(0, 10)] private int _defaultPoolSize = 10;
     [SerializeField, Range(11, 100)] private int _maxPoolSize = 15;
@@ -19,12 +22,22 @@ public class Spawner : MonoBehaviour
             (
             createFunc: () => Instantiate(_prefab),
             actionOnGet: (cube) => GetCube(cube),
-            actionOnRelease: (cube) => ReleaseCube(cube),
+            actionOnRelease: (cube) => cube.gameObject.SetActive(false),
             actionOnDestroy: (cube) => Destroy(cube),
             collectionCheck: true,
             defaultCapacity: _defaultPoolSize,
             maxSize: _maxPoolSize            
             );
+    }
+
+    private void OnEnable()
+    {
+        _releaser.ReleaseTimeCome += ReleaseCube;
+    }
+
+    private void OnDisable()
+    {
+        _releaser.ReleaseTimeCome += ReleaseCube;
     }
 
     private void Start()
@@ -42,13 +55,18 @@ public class Spawner : MonoBehaviour
         cube.gameObject.SetActive(true);
         cube.transform.position = GetRandomPosition();
         cube.transform.rotation = Quaternion.identity;
+        cube.MeshRenderer.material.color = _prefabColor;
+
         cube.PlatformHitted += _colorer.SetRandomColor;
+        cube.PlatformHitted += _releaser.StartReleaseCoroutine;
     }
 
     private void ReleaseCube(Cube cube)
     {
         _pool.Release(cube);
         cube.PlatformHitted -= _colorer.SetRandomColor;
+        cube.PlatformHitted -= _releaser.StartReleaseCoroutine;
+        Debug.Log("Release");
     }
 
     private Vector3 GetRandomPosition()
