@@ -47,7 +47,6 @@ public class Spawner : MonoBehaviour
 
     private void GetCube(Cube cube)
     {
-        cube.Rigidbody.WakeUp();
         cube.gameObject.SetActive(true);
 
         cube.transform.position = GetRandomPosition();
@@ -61,7 +60,6 @@ public class Spawner : MonoBehaviour
     private void ReleaseCube(Cube cube)
     {
         cube.gameObject.SetActive(false);
-        cube.Rigidbody.Sleep();
     }
 
     private Vector3 GetRandomPosition()
