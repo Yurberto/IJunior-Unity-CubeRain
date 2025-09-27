@@ -17,7 +17,7 @@ public class Bomb : RainItem
     protected override void Awake()
     {
         base.Awake();
-        MaterialUtils.SetupMaterialForTransparency(_meshRenderer.material);
+        MaterialUtils.SetupMaterialForTransparency(MeshRenderer.material);
     }
 
     private void OnEnable()
@@ -34,7 +34,7 @@ public class Bomb : RainItem
     {
         float alpha = MaterialUtils.MaxAlpha;
 
-        float explodeTime = Random.Range(_minReleaseDelay, _maxReleaseDelay);
+        float explodeTime = Random.Range(MinReleaseDelay, MaxReleaseDelay);
         float timer = 0;
 
         while (timer < explodeTime)
@@ -67,8 +67,8 @@ public class Bomb : RainItem
 
     private void SetAlpha (float alpha)
     {
-        Color color = _meshRenderer.material.color;
+        Color color = MeshRenderer.material.color;
         color.a = Mathf.Clamp01(alpha);
-        _meshRenderer.material.color = color;
+        MeshRenderer.material.color = color;
     }
 }

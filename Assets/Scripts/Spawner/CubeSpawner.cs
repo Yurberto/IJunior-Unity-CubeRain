@@ -12,15 +12,15 @@ public class CubeSpawner : Spawner<Cube>
 
     private void Start()
     {
-        _spawnCoroutine = StartCoroutine(SpawnCoroutine());
+        SpawnCoroutine = StartCoroutine(ContinuousSpawnCoroutine());
     }
 
     protected override void GetAction(Cube @object)
     {
         base.GetAction(@object);
         @object.transform.position = GetRandomPosition();
-        @object.Rigidbody.velocity = Vector3.zero;
-        @object.Rigidbody.angularVelocity = Vector3.zero;
+        @object.AttachedRigidbody.velocity = Vector3.zero;
+        @object.AttachedRigidbody.angularVelocity = Vector3.zero;
         @object.StartReleaseCoroutine();
         @object.ReleaseTimeCome += Release; 
     }
@@ -32,7 +32,7 @@ public class CubeSpawner : Spawner<Cube>
         CubeReleased?.Invoke(@object);
     }
 
-    private IEnumerator SpawnCoroutine()
+    private IEnumerator ContinuousSpawnCoroutine()
     {
         var wait = new WaitForSeconds(_spawnDelay);
 

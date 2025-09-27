@@ -4,16 +4,16 @@ public class BombSpawner : Spawner<Bomb>
 {
     public void SpawnOnPosition(Vector3 position)
     {
-        Bomb spawned = _pool.Get();
+        Bomb spawned = Pool.Get();
         spawned.InitializePosition(position);
-        _spawnedCount++;
+        SpawnedCounter++;
     }
 
     protected override void GetAction(Bomb @object)
     {
         base.GetAction(@object);
-        @object.Rigidbody.velocity = Vector3.zero;
-        @object.Rigidbody.angularVelocity = Vector3.zero;
+        @object.AttachedRigidbody.velocity = Vector3.zero;
+        @object.AttachedRigidbody.angularVelocity = Vector3.zero;
         @object.StartReleaseCoroutine();
         @object.Exploded += Release;
     }

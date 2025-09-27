@@ -4,37 +4,37 @@ using UnityEngine;
 
 public abstract class RainItem : MonoBehaviour
 {
-    [SerializeField, Range(0.0f, 10.0f)] protected float _minReleaseDelay = 2.0f;
-    [SerializeField, Range(0.0f, 10.0f)] protected float _maxReleaseDelay = 5.0f;
+    [SerializeField, Range(0.0f, 10.0f)] protected float MinReleaseDelay = 2.0f;
+    [SerializeField, Range(0.0f, 10.0f)] protected float MaxReleaseDelay = 5.0f;
 
-    protected Rigidbody _rigidbody;
-    protected MeshRenderer _meshRenderer;
+    protected Rigidbody Rigidbody;
+    protected MeshRenderer MeshRenderer;
 
-    protected Coroutine _releaseCoroutine;
+    protected Coroutine Releaser;
 
-    public Rigidbody Rigidbody => _rigidbody;
+    public Rigidbody AttachedRigidbody => Rigidbody;
 
     private void OnValidate()
     {
-        if (_minReleaseDelay >= _maxReleaseDelay)
-            _minReleaseDelay = _maxReleaseDelay - 1;
+        if (MinReleaseDelay >= MaxReleaseDelay)
+            MinReleaseDelay = MaxReleaseDelay - 1;
     }
 
     protected virtual void Awake()
     {
-        _meshRenderer = GetComponent<MeshRenderer>();
-        _rigidbody = GetComponent<Rigidbody>();
+        MeshRenderer = GetComponent<MeshRenderer>();
+        Rigidbody = GetComponent<Rigidbody>();
     }
 
     public void StartReleaseCoroutine()
     {
-        if (_releaseCoroutine != null)
+        if (Releaser != null)
         {
-            StopCoroutine(_releaseCoroutine);
-            _releaseCoroutine = null;
+            StopCoroutine(Releaser);
+            Releaser = null;
         }
 
-        _releaseCoroutine = StartCoroutine(ReleaseCoroutine());
+        Releaser = StartCoroutine(ReleaseCoroutine());
     }
 
     protected abstract IEnumerator ReleaseCoroutine();

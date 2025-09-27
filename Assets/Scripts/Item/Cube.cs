@@ -16,7 +16,7 @@ public class Cube : RainItem
     private void OnDisable()
     {
         _isPlatformHitted = false;
-        _meshRenderer.material.color = _defaultColor;
+        MeshRenderer.material.color = _defaultColor;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -28,14 +28,14 @@ public class Cube : RainItem
         {
             PlatformHitted?.Invoke(this);
             _isPlatformHitted = true;
-            _meshRenderer.material.color = Random.ColorHSV();
+            MeshRenderer.material.color = Random.ColorHSV();
             StartCoroutine(ReleaseCoroutine());
         }
     }
 
     protected override IEnumerator ReleaseCoroutine()
     {
-        float delay = Random.Range(_minReleaseDelay, _maxReleaseDelay);
+        float delay = Random.Range(MinReleaseDelay, MaxReleaseDelay);
         yield return new WaitForSeconds(delay);
         ReleaseTimeCome?.Invoke(this);
     }

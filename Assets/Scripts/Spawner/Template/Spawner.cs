@@ -3,22 +3,22 @@ using UnityEngine.Pool;
 
 public class Spawner<T> : MonoBehaviour where T : MonoBehaviour
 {
-    [SerializeField] protected T _prefab;
+    [SerializeField] protected T Prefab;
 
-    protected float _spawnedCount = 0;
+    protected float SpawnedCounter = 0;
 
-    protected ObjectPool<T> _pool;
-    protected Coroutine _spawnCoroutine;
+    protected ObjectPool<T> Pool;
+    protected Coroutine SpawnCoroutine;
 
-    public float SpawnedCount => _spawnedCount;
-    public float CreatedCount => _pool.CountAll;
-    public float ActiveCount => _pool.CountActive;
+    public float SpawnedCount => SpawnedCounter;
+    public float CreatedCount => Pool.CountAll;
+    public float ActiveCount => Pool.CountActive;
 
     protected virtual void Awake()
     {
-        _pool = new ObjectPool<T>
+        Pool = new ObjectPool<T>
             (
-                createFunc: () => Instantiate(_prefab),
+                createFunc: () => Instantiate(Prefab),
                 actionOnGet: (@object) => GetAction(@object),
                 actionOnRelease: (@object) => ReleaseAction(@object),
                 actionOnDestroy: (@object) => Destroy(@object.gameObject)
@@ -27,13 +27,13 @@ public class Spawner<T> : MonoBehaviour where T : MonoBehaviour
 
     public virtual void Spawn()
     {
-        _pool.Get();
-        _spawnedCount++;
+        Pool.Get();
+        SpawnedCounter++;
     }
 
     public virtual void Release(T @object)
     {
-        _pool.Release(@object);
+        Pool.Release(@object);
     }
 
     protected virtual void GetAction(T @object)
