@@ -8,22 +8,36 @@ public class Cube : MonoBehaviour
 {
     [SerializeField] private Color _defaultColor = Color.white;
 
-    [SerializeField, Range(0, 5)] private float _minReleaseDelay = 2.0f;
-    [SerializeField, Range(0, 10)] private float _maxReleaseDelay = 5.0f;
+    [SerializeField, Range(0.0f, 10.0f)] private float _minReleaseDelay = 2.0f;
+    [SerializeField, Range(0.0f, 10.0f)] private float _maxReleaseDelay = 5.0f;
 
-    private MeshRenderer _meshRenderer;
     private Rigidbody _rigidbody;
+    private MeshRenderer _meshRenderer;
+    
+    private Coroutine _releaseCoroutine;
     private bool _isPlatformHitted;
+
+    public event Action<Cube> ReleaseTimeCome;
+    public event Action<Cube> PlatformHitted;
 
     public Rigidbody Rigidbody => _rigidbody;
 
-    public event Action<Cube> PlatformHitted;
-    public event Action<Cube> ReleaseTimeCome;
+    private void OnValidate()
+    {
+        if (_minReleaseDelay >= _maxReleaseDelay)
+            _minReleaseDelay = _maxReleaseDelay - 1;
+    }
 
     private void Awake()
     {
-        _meshRenderer = GetComponent<MeshRenderer>();
         _rigidbody = GetComponent<Rigidbody>();
+        _meshRenderer = GetComponent<MeshRenderer>();
+    }
+
+    private void OnDisable()
+    {
+        _isPlatformHitted = false;
+        _meshRenderer.material.color = _defaultColor;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -36,23 +50,22 @@ public class Cube : MonoBehaviour
             PlatformHitted?.Invoke(this);
             _isPlatformHitted = true;
             _meshRenderer.material.color = Random.ColorHSV();
-            StartCoroutine(ReleaseEventCorutine());
+            StartCoroutine(ReleaseCoroutine());
         }
     }
 
-    private void OnDisable()
+    public void StartReleaseCoroutine()
     {
-        _isPlatformHitted = false;
-        _meshRenderer.material.color = _defaultColor;
+        if (_releaseCoroutine != null)
+        {
+            StopCoroutine(_releaseCoroutine);
+            _releaseCoroutine = null;
+        }
+
+        _releaseCoroutine = StartCoroutine(ReleaseCoroutine());
     }
 
-    private void OnValidate()
-    {
-        if (_minReleaseDelay >= _maxReleaseDelay)
-            _minReleaseDelay = _maxReleaseDelay - 1;
-    }
-
-    private IEnumerator ReleaseEventCorutine()
+    private IEnumerator ReleaseCoroutine()
     {
         float delay = Random.Range(_minReleaseDelay, _maxReleaseDelay);
         yield return new WaitForSeconds(delay);
