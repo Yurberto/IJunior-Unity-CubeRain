@@ -2,6 +2,12 @@ using UnityEngine;
 
 public class BombSpawner : Spawner<Bomb>
 {
+    public void SpawnOnPosition(Vector3 position)
+    {
+        Bomb spawned = _pool.Get();
+        spawned.InitializePosition(position);
+    }
+
     protected override void GetAction(Bomb @object)
     {
         base.GetAction(@object);

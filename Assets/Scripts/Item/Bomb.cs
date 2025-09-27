@@ -25,6 +25,11 @@ public class Bomb : RainItem
         SetAlpha(MaterialUtils.MaxAlpha); 
     }
 
+    public void InitializePosition(Vector3 position)
+    {
+        transform.position = position;
+    }
+
     protected override IEnumerator ReleaseCoroutine()
     {
         float alpha = MaterialUtils.MaxAlpha;
