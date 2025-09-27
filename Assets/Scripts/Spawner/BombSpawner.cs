@@ -7,7 +7,7 @@ public class BombSpawner : Spawner<Bomb>
         base.GetAction(@object);
         @object.Rigidbody.velocity = Vector3.zero;
         @object.Rigidbody.angularVelocity = Vector3.zero;
-        @object.StartExplosion();
+        @object.StartReleaseCoroutine();
         @object.Exploded += Release;
     }
 

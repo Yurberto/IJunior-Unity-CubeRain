@@ -4,30 +4,19 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 [RequireComponent (typeof(SphereCollider), typeof(Rigidbody), typeof(MeshRenderer))]
-public class Bomb : MonoBehaviour
+public class Bomb : RainItem
 {
-    [SerializeField, Range(0.0f, 10.0f)] private float _minReleaseDelay = 2.0f;
-    [SerializeField, Range(0.0f, 10.0f)] private float _maxReleaseDelay = 5.0f;
 
     [SerializeField, Range(0.0f, 15.0f)] private float _explosionForce = 3.0f;
     [SerializeField, Range(0.0f, 10.0f)] private float _explosionRadius = 5.0f;
 
     [SerializeField, Range(0, 100)] private int _maxExplodedColliders = 20;
 
-    private MeshRenderer _meshRenderer;
-
-    private Rigidbody _rigidbody;
-    private Coroutine _explosion;
-
     public event Action<Bomb> Exploded;
 
-    public Rigidbody Rigidbody => _rigidbody;
-
-    private void Awake()
+    protected override void Awake()
     {
-        _meshRenderer = GetComponent<MeshRenderer>();
-        _rigidbody = GetComponent<Rigidbody>();
-
+        base.Awake();
         MaterialUtils.SetupMaterialForTransparency(_meshRenderer.material);
     }
 
@@ -36,18 +25,7 @@ public class Bomb : MonoBehaviour
         SetAlpha(MaterialUtils.MaxAlpha); 
     }
 
-    public void StartExplosion()
-    {
-        if (_explosion != null)
-        {
-            StopCoroutine(_explosion);
-            _explosion = null;
-        }
-
-        _explosion = StartCoroutine(Explosion());
-    }
-
-    private IEnumerator Explosion()
+    protected override IEnumerator ReleaseCoroutine()
     {
         float alpha = MaterialUtils.MaxAlpha;
 
