@@ -6,6 +6,7 @@ public class BombSpawner : Spawner<Bomb>
     {
         Bomb spawned = _pool.Get();
         spawned.InitializePosition(position);
+        _spawnedCount++;
     }
 
     protected override void GetAction(Bomb @object)

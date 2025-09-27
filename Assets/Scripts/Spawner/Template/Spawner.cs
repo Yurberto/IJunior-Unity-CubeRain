@@ -5,8 +5,14 @@ public class Spawner<T> : MonoBehaviour where T : MonoBehaviour
 {
     [SerializeField] protected T _prefab;
 
+    protected float _spawnedCount = 0;
+
     protected ObjectPool<T> _pool;
     protected Coroutine _spawnCoroutine;
+
+    public float SpawnedCount => _spawnedCount;
+    public float CreatedCount => _pool.CountAll;
+    public float ActiveCount => _pool.CountActive;
 
     protected virtual void Awake()
     {
@@ -22,6 +28,7 @@ public class Spawner<T> : MonoBehaviour where T : MonoBehaviour
     public virtual void Spawn()
     {
         _pool.Get();
+        _spawnedCount++;
     }
 
     public virtual void Release(T @object)
